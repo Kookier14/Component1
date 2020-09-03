@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mapper.UserMapper" >
+  <resultMap id="UserResultMap" type="com.domain.User" >
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_pwd" property="password" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap type="com.domain.Token" id="TokenResultMap">
+  <result column="user_id" property="userId" jdbcType="VARCHAR" />
+  <result column="expire_Time" property="expireTime"  />
+  </resultMap>
+  
+  <resultMap type="com.domain.Api" id="ApiResultMap">
+  <result column="api_id" property="apiId" jdbcType="VARCHAR" />
+  <result column="api_value" property="apiValue"  />
+  </resultMap>
+  <resultMap type="com.domain.Role" id="roleResultMap">
+  <id column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="com.domain.Menu" id="menuResultMap">
+  <id column="menu_id" property="menuId" jdbcType="VARCHAR" />
+    <result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+  </resultMap>
+   <select id="getUserById" resultMap="UserResultMap" parameterType="java.lang.String" >
+    select* from user where user_id=#{userId}
+  </select>
+   <insert id="addUser" parameterType="com.domain.User">
+    insert into user(user_id,user_name,user_pwd,create_time) values(#{userId},#{userName},#{password},#{createTime})
+   </insert>
+   <insert id="addRoleForUser" parameterType="com.domain.User">
+   insert into user_role_map(user_id,role_id) values
+<foreach collection="roles"  item="item"  separator="," >
+(#{userId},#{item.roleId})
+</foreach> 
+   </insert>
+   <select id="getUserByName" resultMap="UserResultMap" parameterType="java.lang.String">
+   select* from user where user_name=#{name}
+   </select>
+   <select id="showAllUsers" resultMap="UserResultMap" >
+   select* from user
+   </select>
+   <select id="getRolesByUserId" resultType="java.lang.String" parameterType="java.lang.String">
+   select role_id from user_role_map where user_id=#{userId}
+   </select>
+   <select id="getRoleById" resultMap="roleResultMap" parameterType="java.lang.String" >
+   select* from role where role_id=#{roleId}
+   </select>
+    <select id="showAllRoles" resultMap="roleResultMap" >
+   select* from role
+   </select>
+   <delete id="deleteUserById" parameterType="java.lang.String">
+   delete from user where user_id=#{userId}
+   </delete>
+   <delete id="deleteRolesOfUser" parameterType="java.lang.String">
+   delete from user_role_map where user_id=#{userId}
+   </delete>
+   <select id="getMenuByRole" parameterType="java.lang.String" resultType="java.lang.String">
+   select menu_id from role_menu_map where role_id=#{roleId}
+   </select>
+   <select id="getUrlByMenuId" parameterType="java.lang.String" resultType="java.lang.String">
+   select url from menu where menu_id=#{menuId}
+   </select>
+   <update id="updateUser" parameterType="com.domain.User">
+   update user set user_name=#{userName} where user_id=#{userId}
+   </update>
+   <update id="updatePassword" parameterType="com.domain.User">
+   update user set user_pwd=#{password} where user_id=#{userId}
+   </update>
+   
+   <insert id="addRole" parameterType="com.domain.Role">
+   insert into role values(#{roleId},#{roleName})
+   </insert>
+   <insert id="addRoleMenuMap" parameterType="com.domain.RoleMenuMap" >
+   insert into role_menu_map values(#{roleId},#{menuId})
+   </insert>
+   <select id="selectRoleByName" parameterType="java.lang.String" resultMap="roleResultMap" >
+   select * from role where role_name=#{roleName}
+   </select>
+   <delete id="deleteRole" parameterType="java.lang.String">
+   delete from role where role_id=#{roleId}
+   </delete>
+   <delete id="deleteRoleMenuMap" parameterType="java.lang.String">
+   delete from role_menu_map where role_id=#{roleId}
+   </delete>
+   <update id="updateRole" parameterType="com.domain.Role">
+   update role set role_name=#{roleName} where role_id=#{roleId}
+   </update>
+   <select id="showAllMenus" resultMap="menuResultMap" >
+   select* from menu
+   </select>
+   <select id="getMenuById" parameterType="java.lang.String" resultMap="menuResultMap">
+   select * from menu where menu_id=#{menuId}
+   </select>
+   <insert id="addToken" parameterType="com.domain.Token">
+   insert into token values(#{userId},#{token},#{expireTime})
+   </insert>
+   <delete id="deleteToken" parameterType="java.lang.String"> 
+   delete from token where token=#{token}
+   </delete>
+   <select id="selectToken" parameterType="java.lang.String" resultMap="TokenResultMap">
+   select * from token where token=#{token}
+   </select>
+   <select id="selectTokenByUserId" parameterType="java.lang.String" resultMap="TokenResultMap">
+   select * from token where user_id=#{userId}
+   </select>
+   
+   <select id="getAllApi" resultMap="ApiResultMap">
+   select * from apis;
+   </select>
+   <select id="getApiByMenu" parameterType="java.lang.String" resultType="java.lang.String" >
+   select api_id from menu_apis_map where menu_id=#{menuId}
+   </select>
+   
+</mapper>

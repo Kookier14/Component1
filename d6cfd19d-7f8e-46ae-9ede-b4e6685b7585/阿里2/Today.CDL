@@ -1,0 +1,30 @@
+struct PostData
+{
+
+	string x;gtr
+gkdfjlgjdflkjglkdf
+	gkdlfjgflkdjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgfld
+
+port OriginalData PostData;
+interface TransformParam
+{
+
+	long uiadd(inoutbcvbvcbkhjkjh long a , in long b);
+};
+
+
+
+
+
+service component Transformer
+{
+
+	publish OriginalData OriginData;
+	provide TransformParam PolarUnit;
+	
+};
+ui component Sensor
+{
+	consume OriginalData OriginData1;
+	require TransformParam PolarUnit1;
+};

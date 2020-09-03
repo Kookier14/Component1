@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mapper.LogMapper" >
+  <resultMap id="logResultMap" type="com.domain.Log" >
+    <id column="log_id" property="logId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+    <select id="showLogs" resultMap="logResultMap" >
+   select* from log
+   </select>
+   <select id="showLogsByTime" parameterType="java.util.Map" resultMap="logResultMap">
+   select * from log where create_time between #{dateTime1} and #{dateTime2}
+   </select>
+   <insert id="insertLog" parameterType="com.domain.Log">
+insert into log(log_id,create_time,message,operator,type) values(#{logId},#{createTime},#{message},#{operator},#{type})
+</insert>
+</mapper>

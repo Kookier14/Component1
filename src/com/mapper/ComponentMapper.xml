@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mapper.ComponentMapper" >
+<resultMap id="componentResultMap" type="com.domain.Component">
+<id column="com_id" property="comId" ></id>
+<result column="par_id" property="comParent.parId"></result>
+<result column="key_word" property="keyWord"  ></result>
+<result column="des_info" property="desInfo"  ></result>
+<result column="fail_info" property="failInfo"  ></result>
+<result column="down_times" property="downTimes"  ></result>
+<result column="create_time" property="createTime"  ></result>
+<result column="user_id" property="user.userId"  ></result>
+<!--  <result  column="com_entity" property="comEntity" javaType="byte[]" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>-->
+</resultMap>
+<resultMap id="comParentResultMap" type="com.domain.ComParent">
+<id column="par_id" property="parId"></id>
+<result column="interface_info" property="interfaceInfo"></result>
+<result column="par_name" property="parName"  ></result>
+<result column="cdl_hash_value" property="cdlHashValue"></result>
+<result column="lastest_version" property="lastestVersion"  ></result>
+<!--  <result  column="par_entity" property="parEntity" javaType="byte[]" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>-->
+</resultMap>
+<resultMap type="com.domain.Term" id="termMap">
+<id column="term_id" property="termId"></id>
+<result column="term_name" property="termName"  ></result>
+<result column="parent_id" property="parId"></result>
+</resultMap>
+
+<insert id="uploadComponent" parameterType="com.domain.Component">
+insert into component(com_id,key_word,des_info,url,user_id,state,version,down_times,create_time,par_id) values(#{comId},#{keyWord},#{desInfo},#{url},#{user.userId},0,#{version},0,#{createTime},#{comParent.parId});
+</insert>
+<insert id="uploadComParent" parameterType="com.domain.ComParent">
+insert into com_parent(par_id,par_name,cdl_hash_value,lastest_version,state,url,cdl,interface_info) values(#{parId},#{parName},#{cdlHashValue},#{lastestVersion},0,#{url},#{CDL},#{interfaceInfo})
+</insert>
+<select id="selectComParByCdl" parameterType="java.lang.String" resultMap="comParentResultMap">
+select * from com_parent where cdl_hash_value=#{cdlHashValue}
+</select>
+<select id="selectComParById" parameterType="java.lang.String" resultMap="comParentResultMap">
+select * from com_parent where par_id=#{parId}
+</select>
+
+<update id="updateParVersion" parameterType="java.lang.Integer">
+update com_parent set lastest_version=#{lastestVersion}
+</update>
+
+<select id="selectComByUserId" parameterType="java.lang.String" resultMap="componentResultMap"  >
+select com_id,des_info,key_word,fail_info,down_times,version,create_time,par_id,state from component where user_id=#{userId} 
+</select>
+
+<select id="selectComById" parameterType="java.lang.String" resultMap="componentResultMap">
+select * from component where com_id=#{comId} 
+</select>
+
+
+<delete id="deleteComById" parameterType="java.lang.String" >
+delete from component where com_id=#{comId}
+</delete>
+
+<select id="showUnverifyCom" resultMap="componentResultMap" >
+select com_id,key_word,fail_info,down_times,version,create_time,par_id,state,user_id,des_info from component where state=0
+</select>
+
+<update id="verifyCom" parameterType="java.util.Map" >
+update component set state=#{state},fail_info=#{denyInfo} where com_id=#{comId}
+</update>
+
+<select id="downloadCom" parameterType="java.lang.String" resultMap="componentResultMap">
+select com_entity,par_id,com_name,com_id from component where com_id=#{comId}
+</select>
+
+<select id="downloadComParent" parameterType="java.lang.String" resultMap="comParentResultMap" >
+select par_entity,par_id,par_name from com_parent where par_id=#{parId} 
+</select>
+<select id="showVerifiedCom"  resultMap="componentResultMap">
+select * from component where state=1
+</select>
+<update id="updateDonwloadTimes" parameterType="java.lang.String" >
+update component set down_times=down_times+1 where com_id=#{comId}
+</update>
+<select id="showTerms" resultMap="termMap">
+select * from term
+</select>
+<select id="showComIdByTerm" parameterType="java.lang.String" resultType="java.lang.String">
+select com_id from com_term_map where term_id=#{termId}
+</select>
+<delete id="deleteTermById" parameterType="java.lang.String">
+delete from term where term_id=#{termId}
+</delete>
+<delete id="deleteMapByTermId" parameterType="java.lang.String">
+delete from com_term_map where term_id=#{termId}
+</delete>
+<select id="getTermByParId" parameterType="java.lang.String" resultType="java.lang.String" >
+select term_id from term where parent_id=#{parId}
+</select>
+<insert id="addTerm" parameterType="com.domain.Term">
+insert into term values(#{termId},#{termName},#{parId},#{level})
+</insert>
+<delete id="deleteMapByComId" parameterType="java.lang.String">
+delete from com_term_map where com_id=#{comId}
+</delete>
+<insert id="addComTermMap" parameterType="Map">
+insert into com_term_map values(#{termId},#{comId})
+</insert>
+<select id="getTermByName" parameterType="java.lang.String" resultMap="termMap" >
+select * from term where term_name=#{termName}
+</select>
+</mapper>

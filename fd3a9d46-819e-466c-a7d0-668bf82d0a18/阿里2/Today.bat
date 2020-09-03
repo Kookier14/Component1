@@ -1,0 +1,1 @@
+CALL "D:\rTI-dds\rti_connext_dds-5.2.3/bin/rtiddsgen" E:\gbug\/Today_CDL/TodayIDL.idl -ppDisable -d E:\gbug\/Today_CDL/IDLGenerate -language C++ -create typefiles -replace

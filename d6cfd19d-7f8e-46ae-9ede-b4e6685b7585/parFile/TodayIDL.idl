@@ -1,0 +1,18 @@
+struct PostData
+{
+	string x; 
+
+};
+
+struct uiadd_ret
+{
+	long result;
+	long a;
+};
+
+struct uiadd_params
+{
+	long a;
+	long b;
+};
+
